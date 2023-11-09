@@ -14,3 +14,32 @@ services:
       - "8000:8000"
     env_file:
       - ./.env.dev
+
+  rabbitmq:
+    restart: always
+    image: rabbitmq:latest
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    expose:
+      - "5672"
+    environment:
+      RABBITMQ_DEFAULT_VHOST: "/"
+      RABBITMQ_DEFAULT_USER: "guest"
+      RABBITMQ_DEFAULT_PASS: "guest"
+
+  celery:
+    build: ./app
+    command: celery -A my_project worker -l info
+    volumes:
+      - ./app/:/code
+    depends_on:
+      - rabbitmq
+
+  celery-beat:
+    build: ./app
+    command: celery -A my_project beat -l info
+    volumes:
+      - ./app/:/code
+    depends_on:
+      - rabbitmq
