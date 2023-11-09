@@ -1,5 +1,5 @@
 # python official image
-FROM python:3.12.0-alpine3.18
+FROM python:3.10-alpine3.18
 
 # install dependencies
 RUN \
